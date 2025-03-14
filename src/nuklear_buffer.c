@@ -186,9 +186,9 @@ NK_API void
 nk_buffer_push(struct nk_buffer *b, enum nk_buffer_allocation_type type,
     const void *memory, nk_size size, nk_size align)
 {
-    void *mem = nk_buffer_alloc(b, type, size, align);
-    if (!mem) return;
-    NK_MEMCPY(mem, memory, size);
+    void *buf = nk_buffer_alloc(b, type, size, align);
+    if (!buf) return;
+    NK_MEMCPY(buf, memory, size);
 }
 NK_API void
 nk_buffer_mark(struct nk_buffer *buffer, enum nk_buffer_allocation_type type)

@@ -34,13 +34,13 @@ nk_str_init_fixed(struct nk_str *str, void *memory, nk_size size)
 NK_API int
 nk_str_append_text_char(struct nk_str *s, const char *str, int len)
 {
-    char *mem;
+    char *buf;
     NK_ASSERT(s);
     NK_ASSERT(str);
     if (!s || !str || !len) return 0;
-    mem = (char*)nk_buffer_alloc(&s->buffer, NK_BUFFER_FRONT, (nk_size)len * sizeof(char), 0);
-    if (!mem) return 0;
-    NK_MEMCPY(mem, str, (nk_size)len * sizeof(char));
+    buf = (char*)nk_buffer_alloc(&s->buffer, NK_BUFFER_FRONT, (nk_size)len * sizeof(char), 0);
+    if (!buf) return 0;
+    NK_MEMCPY(buf, str, (nk_size)len * sizeof(char));
     s->len += nk_utf_len(str, len);
     return len;
 }
@@ -114,7 +114,7 @@ NK_API int
 nk_str_insert_at_char(struct nk_str *s, int pos, const char *str, int len)
 {
     int i;
-    void *mem;
+    void *buf;
     char *src;
     char *dst;
 
@@ -131,8 +131,8 @@ nk_str_insert_at_char(struct nk_str *s, int pos, const char *str, int len)
         nk_str_append_text_char(s, str, len);
         return 1;
     }
-    mem = nk_buffer_alloc(&s->buffer, NK_BUFFER_FRONT, (nk_size)len * sizeof(char), 0);
-    if (!mem) return 0;
+    buf = nk_buffer_alloc(&s->buffer, NK_BUFFER_FRONT, (nk_size)len * sizeof(char), 0);
+    if (!buf) return 0;
 
     /* memmove */
     NK_ASSERT(((int)pos + (int)len + ((int)copylen - 1)) >= 0);
@@ -140,8 +140,8 @@ nk_str_insert_at_char(struct nk_str *s, int pos, const char *str, int len)
     dst = nk_ptr_add(char, s->buffer.memory.ptr, pos + len + (copylen - 1));
     src = nk_ptr_add(char, s->buffer.memory.ptr, pos + (copylen-1));
     for (i = 0; i < copylen; ++i) *dst-- = *src--;
-    mem = nk_ptr_add(void, s->buffer.memory.ptr, pos);
-    NK_MEMCPY(mem, str, (nk_size)len * sizeof(char));
+    buf = nk_ptr_add(void, s->buffer.memory.ptr, pos);
+    NK_MEMCPY(buf, str, (nk_size)len * sizeof(char));
     s->len = nk_utf_len((char *)s->buffer.memory.ptr, (int)s->buffer.allocated);
     return 1;
 }
